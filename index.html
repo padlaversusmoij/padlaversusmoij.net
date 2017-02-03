@@ -191,10 +191,10 @@ div#wrapper {
 <img class="main_image" src="cover.jpg" />
 <ul id="links">
 <h2>Where you can find me</h2>
-<li><a class="blue" target="_blank" href="http://www.flickr.com/photos/mikelay">flickr.com/mikelay</a></li>
-<li><a class="red" target="_blank" href="http://instagram.com/padlaversusmoij">instagram.com/padlaversusmoij</a></li>
-<li><a class="green" target="_blank" href="http://padlaversusmoij.tumblr.com">padlaversusmoij.tumblr.com</a></li>
-<li><a class="orange" target="_blank" href="http://twitter.com/padlaversusmoij">twitter.com/padlaversusmoij</a></li>
+<li><a class="blue js-track-outbound" href="http://www.flickr.com/photos/mikelay">flickr.com/mikelay</a></li>
+<li><a class="red js-track-outbound" href="http://instagram.com/padlaversusmoij">instagram.com/padlaversusmoij</a></li>
+<li><a class="green js-track-outbound" href="http://padlaversusmoij.tumblr.com">padlaversusmoij.tumblr.com</a></li>
+<li><a class="orange js-track-outbound" href="http://twitter.com/padlaversusmoij">twitter.com/padlaversusmoij</a></li>
 </ul>
 
 <h2>Contact</h2>
@@ -206,14 +206,43 @@ div#wrapper {
 </div>
 </div><!-- end div.wrapper -->
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-77269349-1', 'auto');
-  ga('send', 'pageview');
+	ga('create', 'UA-77269349-1', 'auto');
+	ga('send', 'pageview');
 
+	function trackOutboundLink (url, hitCallback) {
+		ga('send', 'event', 'outbound', 'click', url, {
+			'transport': 'beacon',
+			'hitCallback': hitCallback
+		});
+	}
+
+	function newWindow (url, func) {
+		function callback() {
+			window.open(url);
+		}
+
+		return function (e) {
+			e.preventDefault();
+			func(callback);
+		}
+	}
+
+	Array.prototype.map.call(document.getElementsByClassName('js-track-outbound'), function(el) {
+		var url = el.getAttribute('href');
+
+		el.addEventListener(
+			'click',
+			newWindow(
+				url,
+				trackOutboundLink.bind(null, url)
+			)
+		);
+	});
 </script>
 </body>
 </html>
